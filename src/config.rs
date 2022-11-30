@@ -15,29 +15,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
-#[allow(unused_imports)]
-use tracing::{debug, error, info, trace, warn};
+#[derive(serde::Deserialize, Debug)]
+pub struct Config {
+    pub bot: BotConfig,
+    pub log: LogConfig,
+}
 
-mod config;
-mod logging;
+#[derive(serde::Deserialize, Debug)]
+pub struct BotConfig {
+    pub token: String,
+}
 
-use config::Config;
+#[derive(serde::Deserialize, Debug)]
+pub struct LogConfig {
+    pub level: u8,
+    pub dir: std::path::PathBuf,
+}
 
-struct Data {}
-type Error = anyhow::Error;
-type Context<'ctx> = poise::Context<'ctx, Data, Error>;
+impl Config {
+    const DEFAULT_PATH: &str = "orcaconf.toml";
 
-#[tokio::main]
-async fn main() {
-    // right now, this'll *always* read from `orcaconf.toml`, but in the future
-    // I may wanna add the ability to read a different config from, like, an
-    // environment variable. Or a command line flag.
-    let cfg = Config::read(None);
+    pub fn read(path: impl Into<Option<String>>) -> Config {
+        let path = path.into().unwrap_or_else(|| Self::DEFAULT_PATH.into());
 
-    let _log = logging::init(&cfg);
+        let conf_str = std::fs::read_to_string(&path).expect("Unable to read config");
 
-    info!(
-        version = env!("CARGO_PKG_VERSION"),
-        "initializing the Omniscient Recording Computer of Alterna"
-    );
+        toml::from_str(&conf_str).expect("Unable to parse config")
+    }
 }

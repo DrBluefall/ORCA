@@ -1,0 +1,13 @@
+[bot]
+token = "<INSERT_TOKEN_HERE>"
+
+[log]
+level = 0
+# TRACE : 0
+# DEBUG : 1
+# INFO  : 2
+# WARN  : 3
+# ERROR : 4+
+# NOTE - this only affects logs written to stdout. Full logs will always be
+# written to log files.
+dir = "log"
