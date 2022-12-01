@@ -18,14 +18,16 @@
 #[allow(unused_imports)]
 use tracing::{debug, error, info, trace, warn};
 
+mod commands;
 mod config;
 mod logging;
 
 use config::Config;
+use poise::serenity_prelude as serenity;
 
-struct Data {}
-type Error = anyhow::Error;
-type Context<'ctx> = poise::Context<'ctx, Data, Error>;
+pub struct Data {}
+pub type Error = anyhow::Error;
+pub type Context<'ctx> = poise::Context<'ctx, Data, Error>;
 
 #[tokio::main]
 async fn main() {
@@ -40,4 +42,33 @@ async fn main() {
         version = env!("CARGO_PKG_VERSION"),
         "initializing the Omniscient Recording Computer of Alterna"
     );
+
+    let fw = poise::Framework::builder()
+        .token(&cfg.bot.token)
+        .intents(
+            serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
+        )
+        .setup(|_, _, _| Box::pin(async move { Ok(Data {}) }))
+        .options(poise::FrameworkOptions {
+            commands: vec![
+                commands::register_commands(),
+                commands::system::system(),
+                commands::system::system_info(),
+            ],
+            prefix_options: poise::PrefixFrameworkOptions {
+                mention_as_prefix: true,
+                ..Default::default()
+            },
+            owners: cfg
+                .bot
+                .owners
+                .iter()
+                .map(|x| serenity::UserId::from(*x))
+                .collect::<std::collections::HashSet<_>>(),
+            ..Default::default()
+        });
+
+    fw.run_autosharded()
+        .await
+        .expect("Fatal error in bot runtime");
 }

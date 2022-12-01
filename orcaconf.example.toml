@@ -1,5 +1,6 @@
 [bot]
 token = "<INSERT_TOKEN_HERE>"
+owners = [ 490650609641324544 ]
 
 [log]
 level = 0
