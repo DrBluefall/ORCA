@@ -24,8 +24,18 @@ mod logging;
 
 use config::Config;
 use poise::serenity_prelude as serenity;
+use sysinfo::SystemExt;
 
-pub struct Data {}
+pub struct Data {
+    pub stats: Statistics,
+}
+
+/// Statistics about the bot's operations.
+pub struct Statistics {
+    pub start_time: std::time::Instant,
+    pub sysinfo: tokio::sync::RwLock<sysinfo::System>,
+}
+
 pub type Error = anyhow::Error;
 pub type Context<'ctx> = poise::Context<'ctx, Data, Error>;
 
@@ -48,7 +58,16 @@ async fn main() {
         .intents(
             serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
         )
-        .setup(|_, _, _| Box::pin(async move { Ok(Data {}) }))
+        .setup(|_, _, _| {
+            Box::pin(async move {
+                Ok(Data {
+                    stats: Statistics {
+                        start_time: std::time::Instant::now(),
+                        sysinfo: tokio::sync::RwLock::new(sysinfo::System::new_all()),
+                    },
+                })
+            })
+        })
         .options(poise::FrameworkOptions {
             commands: vec![
                 commands::register_commands(),
