@@ -1,4 +1,4 @@
-// Copyright (C) 2022, 2023 Alexander Bisono
+// Copyright (C) 2022 Alexander Bisono
 //
 // This file is part of O.R.C.A., a Splatoon 3 Discord Bot.
 //
