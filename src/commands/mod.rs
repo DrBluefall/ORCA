@@ -18,6 +18,7 @@
 pub mod system;
 
 #[poise::command(prefix_command, owners_only)]
+/// Register all of the bot's slash-commands.
 pub async fn register_commands(ctx: crate::Context<'_>) -> Result<(), crate::Error> {
     poise::builtins::register_application_commands_buttons(ctx).await?;
     Ok(())

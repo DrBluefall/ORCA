@@ -19,11 +19,13 @@ use poise::serenity_prelude::{CacheHttp, Color};
 use sysinfo::{ProcessExt, System, SystemExt};
 
 #[poise::command(slash_command, owners_only, subcommands("system_info"))]
+/// Commands intended to assist in the bot's administration.
 pub async fn system(_: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
 #[poise::command(slash_command, rename = "info")]
+/// Inspect details about the bot.
 pub async fn system_info(
     ctx: Context<'_>,
     #[description = "Display info publicly."]
@@ -113,7 +115,7 @@ pub async fn system_info(
     }
 
     ctx.send(|m| {
-        m.content("foo").embed(|em| {
+        m.embed(|em| {
             em.title("System Information")
                 .thumbnail(
                     current_user
