@@ -12,3 +12,13 @@ level = 0
 # NOTE - this only affects logs written to stdout. Full logs will always be
 # written to log files.
 dir = "log"
+
+[database]
+url = "mysql://drbluefall@localhost/bigirononherhip"
+# Set this to log queries made by SeaORM to the database.
+log_queries = 1
+# TRACE : 0
+# DEBUG : 1
+# INFO  : 2
+# WARN  : 3
+# ERROR : 4+

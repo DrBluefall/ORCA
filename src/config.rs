@@ -20,6 +20,7 @@ use std::collections::HashSet;
 pub struct Config {
     pub bot: BotConfig,
     pub log: LogConfig,
+    pub database: DatabaseConfig,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -32,6 +33,12 @@ pub struct BotConfig {
 pub struct LogConfig {
     pub level: u8,
     pub dir: std::path::PathBuf,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct DatabaseConfig {
+    pub url: String,
+    pub log_queries: Option<u8>,
 }
 
 impl Config {

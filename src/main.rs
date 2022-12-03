@@ -15,8 +15,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
+use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection};
+use tracing::log::LevelFilter;
 #[allow(unused_imports)]
-use tracing::{debug, error, info, trace, warn};
+use tracing::{debug, error, info, trace, warn, Level};
 
 mod commands;
 mod config;
@@ -28,6 +30,7 @@ use sysinfo::SystemExt;
 
 pub struct Data {
     pub stats: Statistics,
+    pub db: DatabaseConnection,
 }
 
 /// Statistics about the bot's operations.
@@ -53,6 +56,29 @@ async fn main() {
         "initializing the Omniscient Recording Computer of Alterna"
     );
 
+    let mut dbopts = ConnectOptions::new(cfg.database.url.clone());
+
+    if let Some(log_queries) = &cfg.database.log_queries {
+        let loglevel = match log_queries {
+            0 => LevelFilter::Trace,
+            1 => LevelFilter::Debug,
+            2 => LevelFilter::Info,
+            3 => LevelFilter::Warn,
+            4.. => LevelFilter::Error,
+        };
+        dbopts.sqlx_logging(true)
+            .sqlx_logging_level(loglevel);
+    } else {
+        dbopts.sqlx_logging(false);
+    }
+
+    let db = Database::connect(dbopts).await.expect("Failed to connect to database");
+
+    info!(
+        r#type = ?db.get_database_backend(),
+        "Connected to the database",
+    );
+
     let fw = poise::Framework::builder()
         .token(&cfg.bot.token)
         .intents(
@@ -61,6 +87,7 @@ async fn main() {
         .setup(|_, _, _| {
             Box::pin(async move {
                 Ok(Data {
+                    db,
                     stats: Statistics {
                         start_time: std::time::Instant::now(),
                         sysinfo: tokio::sync::RwLock::new(sysinfo::System::new_all()),
