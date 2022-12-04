@@ -1,8 +1,13 @@
 # The Omnicient Recording Computer of Alterna
 
+Now with 100% more oxidation!
+
 ## Running the bot
-1. Copy `orcaconf.example.toml` to `orcaconf.toml`. Inside the file, fill in the token for your bot's account.
-2. Run `cargo run`
+
+1. Prepare a MySQL database to run the bot against.
+1. Copy `orcaconf.example.toml` to `orcaconf.toml`. Configure it as desired.
+2. Run `cargo run`. The bot will automatically run migrations against the
+   database specified in `orcaconf.toml` if they haven't been run already.
 3. ...
 4. Profit!
 
@@ -20,5 +25,6 @@
 > A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
 > details.
 >
-> You should have received a copy of the GNU Affero General Public License along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
+> You should have received a copy of the GNU Affero General Public License along
+> with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
