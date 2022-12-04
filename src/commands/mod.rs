@@ -16,6 +16,7 @@
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
 pub mod system;
+pub mod dossier;
 
 #[poise::command(prefix_command, owners_only)]
 /// Register all of the bot's slash-commands.

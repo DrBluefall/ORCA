@@ -106,6 +106,8 @@ async fn main() {
                 commands::register_commands(),
                 commands::system::system(),
                 commands::system::system_info(),
+                commands::dossier::dossier(),
+                commands::dossier::dossier_get(),
             ],
             prefix_options: poise::PrefixFrameworkOptions {
                 mention_as_prefix: true,
