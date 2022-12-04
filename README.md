@@ -11,6 +11,25 @@ Now with 100% more oxidation!
 3. ...
 4. Profit!
 
+## Roadmap
+
+### STAGE 0: THE MOST BASIC FUNCTIONALITY
+- [ ] Basic profile details, parity with summary screen in SplatNet 3
+  - [X] IGN & discriminator
+  - [ ] Level
+  - [ ] Loadout (*maaaaaaybe* multiple? consider `/dossier fits` command in future)
+  - [ ] Rank Info
+    - [ ] Anarchy Battle (Current/All-Time)
+    - [ ] X Battle Statistics (only show if Anarchy Battle stats are > S+0)
+  - [ ] Turf Inked
+  - [ ] Total Victories
+  - [ ] Badge Count
+  - [ ] Preferred Weapons
+  
+### STAGE 1: QUALITY OF LIFE FEATURES
+- [ ] Splatoon3.ink integration
+- [ ] Localized Commands
+
 ## License
 
 > Copyright 2022 Alexander Bisono.
