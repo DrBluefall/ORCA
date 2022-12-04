@@ -26,9 +26,18 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(S3Profile::InGameName)
-                    .string_len(10).not_null().default("Player"))
-                    .col(ColumnDef::new(S3Profile::Discriminator).string_len(4).not_null().default("0000"))
+                    .col(
+                        ColumnDef::new(S3Profile::InGameName)
+                            .string_len(10)
+                            .not_null()
+                            .default("Player"),
+                    )
+                    .col(
+                        ColumnDef::new(S3Profile::Discriminator)
+                            .string_len(4)
+                            .not_null()
+                            .default("0000"),
+                    )
                     .to_owned(),
             )
             .await

@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
-pub mod system;
 pub mod dossier;
+pub mod system;
 
 #[poise::command(prefix_command, owners_only)]
 /// Register all of the bot's slash-commands.

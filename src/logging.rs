@@ -39,7 +39,12 @@ pub fn init(cfg: &Config) -> (WorkerGuard,) {
     let registry = tracing_subscriber::registry()
         .with(log_formatter().pretty().with_writer(std::io::stdout))
         .with(LevelFilter::from_level(stdout_level))
-        .with(log_formatter().compact().with_ansi(false).with_writer(nb_appender));
+        .with(
+            log_formatter()
+                .compact()
+                .with_ansi(false)
+                .with_writer(nb_appender),
+        );
 
     tracing::subscriber::set_global_default(registry).expect("Unable to initialize tracing");
 

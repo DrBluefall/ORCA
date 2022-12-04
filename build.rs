@@ -55,5 +55,8 @@ fn main() {
 
     /* also exporting TARGET from the build script to the crate itself */
 
-    println!("cargo:rustc-env=ORCA_EXEC_TARGET={}", std::env::var("TARGET").unwrap());
+    println!(
+        "cargo:rustc-env=ORCA_EXEC_TARGET={}",
+        std::env::var("TARGET").unwrap()
+    );
 }

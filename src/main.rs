@@ -30,7 +30,6 @@ use sea_orm_migration::prelude::*;
 use sysinfo::SystemExt;
 use tracing::log::LevelFilter;
 
-
 pub struct Data {
     pub stats: Statistics,
     pub db: DatabaseConnection,
@@ -78,7 +77,9 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
-    Migrator::up(&db, None).await.expect("Failed to apply migrations");
+    Migrator::up(&db, None)
+        .await
+        .expect("Failed to apply migrations");
 
     info!(
         r#type = ?db.get_database_backend(),
