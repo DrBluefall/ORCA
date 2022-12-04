@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
-use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection};
-use tracing::log::LevelFilter;
+use migration::Migrator;
 #[allow(unused_imports)]
 use tracing::{debug, error, info, trace, warn, Level};
 
@@ -26,7 +25,11 @@ mod logging;
 
 use config::Config;
 use poise::serenity_prelude as serenity;
+use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection, ActiveValue, EntityTrait};
+use sea_orm_migration::prelude::*;
 use sysinfo::SystemExt;
+use tracing::log::LevelFilter;
+use entity::prelude::*;
 
 pub struct Data {
     pub stats: Statistics,
@@ -66,17 +69,20 @@ async fn main() {
             3 => LevelFilter::Warn,
             4.. => LevelFilter::Error,
         };
-        dbopts.sqlx_logging(true)
-            .sqlx_logging_level(loglevel);
+        dbopts.sqlx_logging(true).sqlx_logging_level(loglevel);
     } else {
         dbopts.sqlx_logging(false);
     }
 
-    let db = Database::connect(dbopts).await.expect("Failed to connect to database");
+    let db = Database::connect(dbopts)
+        .await
+        .expect("Failed to connect to database");
+
+    Migrator::up(&db, None).await.expect("Failed to apply migrations");
 
     info!(
         r#type = ?db.get_database_backend(),
-        "Connected to the database",
+        "Database connected & set up!",
     );
 
     let fw = poise::Framework::builder()
