@@ -25,11 +25,11 @@ mod logging;
 
 use config::Config;
 use poise::serenity_prelude as serenity;
-use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection, ActiveValue, EntityTrait};
+use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection};
 use sea_orm_migration::prelude::*;
 use sysinfo::SystemExt;
 use tracing::log::LevelFilter;
-use entity::prelude::*;
+
 
 pub struct Data {
     pub stats: Statistics,
