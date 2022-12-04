@@ -25,6 +25,9 @@ Now with 100% more oxidation!
   - [ ] Total Victories
   - [ ] Badge Count
   - [ ] Preferred Weapons
+  - [ ] Titles\*
+  
+\*: Titles will be complicated. Mostly because of differences in languages.
   
 ### STAGE 1: QUALITY OF LIFE FEATURES
 - [ ] Splatoon3.ink integration
