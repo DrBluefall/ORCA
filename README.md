@@ -16,13 +16,13 @@ Now with 100% more oxidation!
 ### STAGE 0: THE MOST BASIC FUNCTIONALITY
 - [ ] Basic profile details, parity with summary screen in SplatNet 3
   - [X] IGN & discriminator
-  - [ ] Level
+  - [x] Level
   - [ ] Loadout (*maaaaaaybe* multiple? consider `/dossier fits` command in future)
   - [ ] Rank Info
-    - [ ] Anarchy Battle (Current/All-Time)
+    - [x] Anarchy Battle (Current/All-Time)
     - [ ] X Battle Statistics (only show if Anarchy Battle stats are > S+0)
-  - [ ] Turf Inked
-  - [ ] Total Victories
+  - [x] Turf Inked
+  - [x] Total Victories
   - [ ] Badge Count
   - [ ] Preferred Weapons
   - [ ] Titles\*
@@ -32,6 +32,7 @@ Now with 100% more oxidation!
 ### STAGE 1: QUALITY OF LIFE FEATURES
 - [ ] Splatoon3.ink integration
 - [ ] Localized Commands
+  - possible i18n path? re: Fluent & `fluent-templates`
 
 ## License
 

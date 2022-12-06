@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 use crate::{Context, Error};
-use entity::prelude::*;
+use entity::{prelude::*, s3_profile::AnarchyRank};
 use poise::serenity_prelude::{Color, User};
-use sea_orm::EntityTrait;
+use sea_orm::{ActiveEnum, EntityTrait};
 
 #[poise::command(slash_command, subcommands("dossier_get"))]
 /// Commands intended to assist in the bot's administration.
@@ -26,6 +26,7 @@ pub async fn dossier(_: Context<'_>) -> Result<(), Error> {
 }
 
 #[poise::command(slash_command, rename = "get")]
+#[tracing::instrument(skip(ctx))]
 /// Fetch a Citizen's dossier.
 pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Error> {
     ctx.defer().await?;
@@ -35,6 +36,45 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
     let citizen = user.as_ref().unwrap_or_else(|| ctx.author());
 
     if let Some(record) = S3Profile::find_by_id(*citizen.id.as_u64()).one(db).await? {
+        let fcdashed = format!(
+            "{}-{}-{}",
+            &record.friend_code[..4],
+            &record.friend_code[4..8],
+            &record.friend_code[8..]
+        );
+
+        let mut fields = vec![
+                    (
+                        "Friend Code",
+                        if let Some(ref token) = record.fclink_token {
+                            format!(
+                                "[SW-{fc}](https://lounge.nintendo.com/friendcode/{fc}/{tok})",
+                                fc = fcdashed,
+                                tok = token
+                            )
+                        } else {
+                            format!("SW-{}", fcdashed)
+                        },
+                        true,
+                    ),
+                    ("Level", record.level.to_string(), true),
+                    ("Turf Inked", format!("{}p", record.turf_inked), true),
+                    ("Recorded Victories", record.total_wins.to_string(), true),
+                    (
+                        "Anarchy Battle Rank (Current/Best)",
+                        format!(
+                            "{}/{}",
+                            record.anarchy_rank_current.to_value(),
+                            record.anarchy_rank_best.to_value()
+                        ),
+                        true,
+                    ),
+                ];
+
+        if let AnarchyRank::SPlus(_) = record.anarchy_rank_current {
+            fields.push(("X Power Statistics", "N/A".into(), false));
+        }
+
         ctx.send(|m| {
             m.embed(|e| {
                 e.title(format!(
@@ -47,6 +87,7 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
                         .unwrap_or_else(|| citizen.default_avatar_url()),
                 )
                 .color(Color::from_rgb(158, 253, 56))
+                .fields(fields)
             })
         })
         .await?;
