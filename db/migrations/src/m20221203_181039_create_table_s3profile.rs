@@ -1,96 +1,31 @@
-use sea_orm_migration::prelude::*;
+use sea_orm_migration::{prelude::*, sea_orm::Schema};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
 #[derive(Iden)]
-enum S3Profile {
-    Table,
-    Id,
-    #[iden = "ign"]
-    InGameName,
-    Discriminator,
-    Level,
-    TurfInked,
-    TotalWins,
-    AnarchyRankCurrent,
-    AnarchyRankBest,
-    FriendCode,
-    #[iden = "fclink_token"]
-    FCLinkToken,
-}
+#[iden = "s3_profile"]
+struct S3ProfileTableIdent;
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        let builder = manager.get_database_backend();
+        let schema = Schema::new(builder);
+
         manager
-            .create_table(
-                Table::create()
-                    .table(S3Profile::Table)
-                    .if_not_exists()
-                    .col(
-                        ColumnDef::new(S3Profile::Id)
-                            .big_unsigned()
-                            .not_null()
-                            .primary_key(),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::InGameName)
-                            .string_len(10)
-                            .not_null()
-                            .default("Player"),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::Discriminator)
-                            .string_len(4)
-                            .not_null()
-                            .default("0000"),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::Level)
-                            .small_unsigned()
-                            .not_null()
-                            .default(1),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::TurfInked)
-                            .unsigned()
-                            .not_null()
-                            .default(0),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::TotalWins)
-                            .small_unsigned()
-                            .not_null()
-                            .default(0),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::AnarchyRankBest)
-                            .string_len(4)
-                            .not_null()
-                            .default("C-"),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::AnarchyRankCurrent)
-                            .string_len(4)
-                            .not_null()
-                            .default("C-"),
-                    )
-                    .col(
-                        ColumnDef::new(S3Profile::FriendCode)
-                            .string_len(12)
-                            .not_null()
-                            .default("000000000000"),
-                    )
-                    .col(ColumnDef::new(S3Profile::FCLinkToken).string_len(10).null())
-                    .to_owned(),
-            )
+            .create_table(schema.create_table_from_entity(entity::s3_profile::Entity))
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(S3Profile::Table).cascade().to_owned())
+            .drop_table(
+                Table::drop()
+                    .table(S3ProfileTableIdent)
+                    .cascade()
+                    .to_owned(),
+            )
             .await
     }
 }
