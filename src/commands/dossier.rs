@@ -73,22 +73,27 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
 
         if let AnarchyRank::SPlus(_) = record.anarchy_rank_current {
             if let Some(xstats) = record.find_related(XBattleStats).one(db).await? {
+                let assets = &ctx.data().conf.assets;
                 let head = format!(
                     "X Battle Ratings | {} Division",
                     match xstats.division {
-                        XBattleDivision::Takaroka => "<:xdiv_takaroka:1050276491428118568> Takaroka",
-                        XBattleDivision::Tentatek => "<:xdiv_tentatek:1050276492212453376> Tentatek",
+                        XBattleDivision::Takaroka => format!("{} Takaroka", assets.xbattle.takaroka),
+                        XBattleDivision::Tentatek => format!("{} Tentatek", assets.xbattle.tentatek),
                     }
                 );
 
                 let body = format!(
-                    "<:xstat_icon_sz:1050270964291751958> *Splat Zones* : {}\n\
-                     <:xstat_icon_tc:1050270962920194078> *Tower Control* : {}\n\
-                     <:xstat_icon_rm:1050270965055094855> *Rainmaker* : {}\n\
-                     <:xstat_icon_cb:1050270967819161670> *Clam Blitz* : {}",
+                    "{} *Splat Zones* : {}\n\
+                     {} *Tower Control* : {}\n\
+                     {} *Rainmaker* : {}\n\
+                     {} *Clam Blitz* : {}",
+                    assets.xbattle.splat_zones,
                     xstats.splat_zones,
+                    assets.xbattle.tower_control,
                     xstats.tower_control,
+                    assets.xbattle.rainmaker,
                     xstats.rainmaker,
+                    assets.xbattle.clam_blitz,
                     xstats.clam_blitz,
                 );
 

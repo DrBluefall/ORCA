@@ -22,3 +22,28 @@ log_queries = 1
 # INFO  : 2
 # WARN  : 3
 # ERROR : 4+
+
+[assets.xbattle]
+
+# Because the icons can't be included directly in the repository as text for
+# *reasons*, the defaults are just text. I will, however, link to where one can
+# get the icons to use for oneself.
+
+# Defaults to "ICN_XDIV_TAKA"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Takoroka_100.png
+takaroka      = "<:xdiv_takaroka:1050276491428118568>"
+# Defaults to "ICN_XDIV_TTEK"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Tentatek_100.png
+tentatek      = "<:xdiv_tentatek:1050276492212453376>"
+# Defaults to "ICN_GOLDBADGE_SZ"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Splat_Zones_1000.png
+splat_zones   = "<:xstat_icon_sz:1050270964291751958>"
+# Defaults to "ICN_GOLDBADGE_TC"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Tower_Control_1000.png
+tower_control = "<:xstat_icon_tc:1050270962920194078>"
+# Defaults to "ICN_GOLDBADGE_RM"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Rainmaker_1000.png
+rainmaker     = "<:xstat_icon_rm:1050270965055094855>"
+# Defaults to "ICN_GOLDBAGE_CB"
+# Icon from https://splatoonwiki.org/wiki/File:S3_Badge_Clam_Blitz_1000.png
+clam_blitz    = "<:xstat_icon_cb:1050270967819161670>"

@@ -33,6 +33,7 @@ use tracing::log::LevelFilter;
 pub struct Data {
     pub stats: Statistics,
     pub db: DatabaseConnection,
+    pub conf: Config,
 }
 
 /// Statistics about the bot's operations.
@@ -91,17 +92,6 @@ async fn main() {
         .intents(
             serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
         )
-        .setup(|_, _, _| {
-            Box::pin(async move {
-                Ok(Data {
-                    db,
-                    stats: Statistics {
-                        start_time: std::time::Instant::now(),
-                        sysinfo: tokio::sync::RwLock::new(sysinfo::System::new_all()),
-                    },
-                })
-            })
-        })
         .options(poise::FrameworkOptions {
             commands: vec![
                 commands::register_commands(),
@@ -121,6 +111,18 @@ async fn main() {
                 .map(|x| serenity::UserId::from(*x))
                 .collect::<std::collections::HashSet<_>>(),
             ..Default::default()
+        })
+        .setup(|_, _, _| {
+            Box::pin(async move {
+                Ok(Data {
+                    conf: cfg,
+                    db,
+                    stats: Statistics {
+                        start_time: std::time::Instant::now(),
+                        sysinfo: tokio::sync::RwLock::new(sysinfo::System::new_all()),
+                    },
+                })
+            })
         });
 
     fw.run_autosharded()

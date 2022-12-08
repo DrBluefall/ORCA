@@ -21,6 +21,8 @@ pub struct Config {
     pub bot: BotConfig,
     pub log: LogConfig,
     pub database: DatabaseConfig,
+    #[serde(default)]
+    pub assets: AssetConfig,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -39,6 +41,35 @@ pub struct LogConfig {
 pub struct DatabaseConfig {
     pub url: String,
     pub log_queries: Option<u8>,
+}
+
+#[derive(serde::Deserialize, Debug, Default)]
+pub struct AssetConfig {
+    #[serde(default)]
+    pub xbattle: XBattleIcons,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct XBattleIcons {
+    pub tentatek: String,
+    pub takaroka: String,
+    pub splat_zones: String,
+    pub tower_control: String,
+    pub rainmaker: String,
+    pub clam_blitz: String,
+}
+
+impl Default for XBattleIcons {
+    fn default() -> Self {
+        Self {
+            tentatek: "ICN_XDIV_TTEK".into(),
+            takaroka: "ICN_XDIV_TAKA".into(),
+            splat_zones: "ICN_GOLDBADGE_SZ".into(),
+            tower_control: "ICN_GOLDBADGE_TC".into(),
+            rainmaker: "ICN_GOLDBADGE_RM".into(),
+            clam_blitz: "ICN_GOLDBADGE_CB".into(),
+        }
+    }
 }
 
 impl Config {
