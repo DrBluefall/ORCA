@@ -18,15 +18,17 @@ Now with 100% more oxidation!
   - [X] IGN & discriminator
   - [x] Level
   - [ ] Loadout (*maaaaaaybe* multiple? consider `/dossier fits` command in future)
-  - [ ] Rank Info
+  - [x] Rank Info
     - [x] Anarchy Battle (Current/All-Time)
-    - [ ] X Battle Statistics (only show if Anarchy Battle stats are > S+0)
+    - [x] X Battle Statistics (only show if Anarchy Battle stats are > S+0)
   - [x] Turf Inked
   - [x] Total Victories
   - [ ] Badge Count
   - [ ] Preferred Weapons
   - [ ] Titles\*
-  
+- [ ] Profile editing website (because dossiers are a bit too complex to edit
+      within Discord)
+
 \*: Titles will be complicated. Mostly because of differences in languages.
   
 ### STAGE 1: QUALITY OF LIFE FEATURES
