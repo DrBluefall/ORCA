@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 use crate::{Context, Error};
-use entity::{prelude::*, s3_profile::AnarchyRank};
+use entity::{prelude::*, s3_profile::AnarchyRank, xbattle_stats::XBattleDivision};
 use poise::serenity_prelude::{Color, User};
-use sea_orm::{ActiveEnum, EntityTrait};
+use sea_orm::{ActiveEnum, EntityTrait, ModelTrait};
 
 #[poise::command(slash_command, subcommands("dossier_get"))]
 /// Commands intended to assist in the bot's administration.
@@ -40,12 +40,12 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
             "{}-{}-{}",
             &record.friend_code[..4],
             &record.friend_code[4..8],
-            &record.friend_code[8..]
+            &record.friend_code[8..],
         );
 
         let mut fields = vec![
                     (
-                        "Friend Code",
+                        "Friend Code".to_string(),
                         if let Some(ref token) = record.fclink_token {
                             format!(
                                 "[SW-{fc}](https://lounge.nintendo.com/friendcode/{fc}/{tok})",
@@ -57,22 +57,43 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
                         },
                         true,
                     ),
-                    ("Level", record.level.to_string(), true),
-                    ("Turf Inked", format!("{}p", record.turf_inked), true),
-                    ("Recorded Victories", record.total_wins.to_string(), true),
+                    ("Level".to_string(), record.level.to_string(), true),
+                    ("Turf Inked".to_string(), format!("{}p", record.turf_inked), false),
+                    ("Recorded Victories".to_string(), record.total_wins.to_string(), false),
                     (
-                        "Anarchy Battle Rank (Current/Best)",
+                        "Anarchy Battle Rank (Current/Best)".to_string(),
                         format!(
                             "{}/{}",
                             record.anarchy_rank_current.to_value(),
                             record.anarchy_rank_best.to_value()
                         ),
-                        true,
+                        false,
                     ),
                 ];
 
         if let AnarchyRank::SPlus(_) = record.anarchy_rank_current {
-            fields.push(("X Power Statistics", "N/A".into(), false));
+            if let Some(xstats) = record.find_related(XBattleStats).one(db).await? {
+                let head = format!(
+                    "X Battle Ratings | {} Division",
+                    match xstats.division {
+                        XBattleDivision::Takaroka => "<:xdiv_takaroka:1050276491428118568> Takaroka",
+                        XBattleDivision::Tentatek => "<:xdiv_tentatek:1050276492212453376> Tentatek",
+                    }
+                );
+
+                let body = format!(
+                    "<:xstat_icon_sz:1050270964291751958> *Splat Zones* : {}\n\
+                     <:xstat_icon_tc:1050270962920194078> *Tower Control* : {}\n\
+                     <:xstat_icon_rm:1050270965055094855> *Rainmaker* : {}\n\
+                     <:xstat_icon_cb:1050270967819161670> *Clam Blitz* : {}",
+                    xstats.splat_zones,
+                    xstats.tower_control,
+                    xstats.rainmaker,
+                    xstats.clam_blitz,
+                );
+
+                fields.push((head, body, false));
+            }
         }
 
         ctx.send(|m| {
