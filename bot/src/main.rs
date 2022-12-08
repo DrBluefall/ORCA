@@ -20,10 +20,8 @@ use migration::Migrator;
 use tracing::{debug, error, info, trace, warn, Level};
 
 mod commands;
-mod config;
-mod logging;
 
-use config::Config;
+use orca_config::Config;
 use poise::serenity_prelude as serenity;
 use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection};
 use sea_orm_migration::prelude::*;
@@ -52,7 +50,7 @@ async fn main() {
     // environment variable. Or a command line flag.
     let cfg = Config::read(None);
 
-    let _log = logging::init(&cfg);
+    let _log = orca_logging::init(&cfg);
 
     info!(
         version = env!("CARGO_PKG_VERSION"),

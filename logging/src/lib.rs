@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 
-use crate::config::Config;
+use orca_config::Config;
 use tracing::{level_filters::LevelFilter, Level};
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt};

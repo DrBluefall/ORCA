@@ -1,2 +1,8 @@
 [workspace]
-members = [ "bot", "db/entities", "db/migrations" ]
+members = [
+        "config",
+        "logging",
+        "bot",
+        "db/entities",
+        "db/migrations",
+]
