@@ -44,32 +44,40 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
         );
 
         let mut fields = vec![
-                    (
-                        "Friend Code".to_string(),
-                        if let Some(ref token) = record.fclink_token {
-                            format!(
-                                "[SW-{fc}](https://lounge.nintendo.com/friendcode/{fc}/{tok})",
-                                fc = fcdashed,
-                                tok = token
-                            )
-                        } else {
-                            format!("SW-{}", fcdashed)
-                        },
-                        true,
-                    ),
-                    ("Level".to_string(), record.level.to_string(), true),
-                    ("Turf Inked".to_string(), format!("{}p", record.turf_inked), false),
-                    ("Recorded Victories".to_string(), record.total_wins.to_string(), false),
-                    (
-                        "Anarchy Battle Rank (Current/Best)".to_string(),
-                        format!(
-                            "{}/{}",
-                            record.anarchy_rank_current.to_value(),
-                            record.anarchy_rank_best.to_value()
-                        ),
-                        false,
-                    ),
-                ];
+            (
+                "Friend Code".to_string(),
+                if let Some(ref token) = record.fclink_token {
+                    format!(
+                        "[SW-{fc}](https://lounge.nintendo.com/friendcode/{fc}/{tok})",
+                        fc = fcdashed,
+                        tok = token
+                    )
+                } else {
+                    format!("SW-{}", fcdashed)
+                },
+                true,
+            ),
+            ("Level".to_string(), record.level.to_string(), true),
+            (
+                "Turf Inked".to_string(),
+                format!("{}p", record.turf_inked),
+                false,
+            ),
+            (
+                "Recorded Victories".to_string(),
+                record.total_wins.to_string(),
+                false,
+            ),
+            (
+                "Anarchy Battle Rank (Current/Best)".to_string(),
+                format!(
+                    "{}/{}",
+                    record.anarchy_rank_current.to_value(),
+                    record.anarchy_rank_best.to_value()
+                ),
+                false,
+            ),
+        ];
 
         if let AnarchyRank::SPlus(_) = record.anarchy_rank_current {
             if let Some(xstats) = record.find_related(XBattleStats).one(db).await? {
@@ -77,8 +85,10 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
                 let head = format!(
                     "X Battle Ratings | {} Division",
                     match xstats.division {
-                        XBattleDivision::Takaroka => format!("{} Takaroka", assets.xbattle.takaroka),
-                        XBattleDivision::Tentatek => format!("{} Tentatek", assets.xbattle.tentatek),
+                        XBattleDivision::Takaroka =>
+                            format!("{} Takaroka", assets.xbattle.takaroka),
+                        XBattleDivision::Tentatek =>
+                            format!("{} Tentatek", assets.xbattle.tentatek),
                     }
                 );
 

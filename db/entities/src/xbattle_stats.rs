@@ -32,7 +32,7 @@ pub enum Relation {
         belongs_to = "super::s3_profile::Entity",
         from = "Column::Id",
         to = "super::s3_profile::Column::Id",
-        on_delete = "Cascade",
+        on_delete = "Cascade"
     )]
     S3Profile,
 }

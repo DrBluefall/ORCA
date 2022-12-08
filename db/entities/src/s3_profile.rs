@@ -171,5 +171,4 @@ impl Related<super::xbattle_stats::Entity> for Entity {
     }
 }
 
-
 impl ActiveModelBehavior for ActiveModel {}
