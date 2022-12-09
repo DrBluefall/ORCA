@@ -7,7 +7,7 @@ edition = "2021"
 migration = { path = "../db/migrations" }
 entity = { path = "../db/entities" }
 orca_config = { path = "../config" }
-orca_logging = { path = "../logging" }
+orca_logging = { path = "../logging", features = [ "bot" ] }
 poise = "0.5"
 tracing-subscriber = "0.3"
 tracing-appender = "0.2"

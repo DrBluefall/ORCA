@@ -3,11 +3,14 @@ name = "orca_logging"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+bot = []
+server = []
 
 [dependencies]
 tracing-subscriber = "0.3"
 tracing-appender = "0.2"
+tracing-log = "0.1"
 orca_config = { path = "../config" }
 
 [dependencies.tracing]

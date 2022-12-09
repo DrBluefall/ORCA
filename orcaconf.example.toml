@@ -11,7 +11,7 @@ level = 0
 # ERROR : 4+
 # NOTE - this only affects logs written to stdout. Full logs will always be
 # written to log files.
-dir = "log"
+botfiles = "log/bot" # the Discord bot's logs will go to this directory
 
 [database]
 url = "mysql://drbluefall@localhost/bigirononherhip"

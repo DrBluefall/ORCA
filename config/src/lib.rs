@@ -31,10 +31,12 @@ pub struct BotConfig {
     pub owners: HashSet<u64>,
 }
 
+
 #[derive(serde::Deserialize, Debug)]
 pub struct LogConfig {
     pub level: u8,
-    pub dir: std::path::PathBuf,
+    pub botfiles: std::path::PathBuf,
+    pub serverfiles: std::path::PathBuf,
 }
 
 #[derive(serde::Deserialize, Debug)]
