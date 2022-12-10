@@ -31,7 +31,6 @@ pub struct BotConfig {
     pub owners: HashSet<u64>,
 }
 
-
 #[derive(serde::Deserialize, Debug)]
 pub struct LogConfig {
     pub level: u8,
@@ -49,6 +48,13 @@ pub struct DatabaseConfig {
 pub struct AssetConfig {
     #[serde(default)]
     pub xbattle: XBattleIcons,
+    #[serde(default)]
+    pub webserver: WebserverAssetConfig,
+}
+
+#[derive(serde::Deserialize, Debug, Default)]
+pub struct WebserverAssetConfig {
+    pub static_files: Option<std::path::PathBuf>,
 }
 
 #[derive(serde::Deserialize, Debug)]

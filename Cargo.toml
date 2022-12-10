@@ -5,4 +5,5 @@ members = [
         "bot",
         "db/entities",
         "db/migrations",
+        "webserver",
 ]

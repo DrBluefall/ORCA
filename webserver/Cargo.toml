@@ -1,0 +1,15 @@
+[package]
+name = "orca-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+orca_config = { path = "../config" }
+orca_logging = { path = "../logging", features = [ "server" ] }
+entity = { path = "../db/entities" }
+actix-web = "4.2"
+actix-files = "0.6"
+
+[dependencies.tracing]
+version = "0.1"
+features = [ "max_level_trace", "release_max_level_info" ]
