@@ -1,16 +1,16 @@
 <script lang="ts">
     import { getCookie, removeCookie } from "typescript-cookie";
-
-    export let current_user = null;
+    import { current_user } from "../lib/userstore";
+    import { get } from "svelte/store";
 
     let cookie = getCookie("discord_user");
     if (cookie !== undefined) {
-        current_user = JSON.parse(cookie);
+        current_user.update((_) => JSON.parse(cookie));
     }
 
     function on_logout() {
         removeCookie("discord_user");
-        current_user = null;
+        current_user.update((_) => null);
     }
 
     function on_login() {
@@ -19,8 +19,8 @@
 </script>
 
 <main>
-    {#if current_user !== null}
-        Hello, {current_user.username}.
+    {#if get(current_user) !== null}
+        Hello, {get(current_user).username}.
         <button on:click={on_logout}>Logout</button>
     {:else}
         <button on:click={on_login}>Login</button>
