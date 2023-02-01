@@ -19,10 +19,25 @@ use std::collections::HashSet;
 #[derive(serde::Deserialize, Debug)]
 pub struct Config {
     pub bot: BotConfig,
+    pub webserver: WebserverConfig,
     pub log: LogConfig,
     pub database: DatabaseConfig,
     #[serde(default)]
     pub assets: AssetConfig,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct WebserverConfig {
+    pub oauth: DiscordOauthConfig,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct DiscordOauthConfig {
+    pub client_id: String,
+    pub client_secret: Option<String>,
+    pub auth_url: String,
+    pub token_url: Option<String>,
+    pub redirect_url: String,
 }
 
 #[derive(serde::Deserialize, Debug)]
