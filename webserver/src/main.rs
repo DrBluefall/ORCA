@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use actix_session::{
     config::CookieContentSecurity, storage::CookieSessionStore, Session, SessionMiddleware,
 };
@@ -15,7 +13,7 @@ use tracing::{info, log::LevelFilter};
 use actix_files::Files;
 use actix_web::{
     cookie::{Key, Cookie},
-    http::header::{self, LOCATION},
+    http::header::LOCATION,
     web, App, HttpResponse, HttpServer, Responder,
 };
 use orca_config::Config;
