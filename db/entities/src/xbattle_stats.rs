@@ -28,6 +28,7 @@ pub enum XBattleDivision {
 #[sea_orm(table_name = "xbattle_stats")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
+    #[serde(skip)]
     pub id: u64,
     pub division: XBattleDivision,
     pub splat_zones: u16,

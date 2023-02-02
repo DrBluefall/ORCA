@@ -197,6 +197,7 @@ impl sea_orm::sea_query::ValueType for AnarchyRank {
 #[sea_orm(table_name = "s3_profile")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
+    #[serde(skip)]
     pub id: u64,
     pub ign: String,
     pub discriminator: String,
