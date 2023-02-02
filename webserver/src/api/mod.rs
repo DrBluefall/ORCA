@@ -7,5 +7,5 @@ pub mod profile;
 
 #[doc(hidden)]
 pub fn configure(cfg: &mut ServiceConfig) {
-    cfg.service(web::scope("/api").service(profile::get_profile));
+    cfg.service(web::scope("/api").service(profile::get_profile).service(profile::edit_profile));
 }
