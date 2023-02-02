@@ -1,12 +1,16 @@
+use std::sync::Arc;
+
 use actix_session::{
     config::CookieContentSecurity, storage::CookieSessionStore, Session, SessionMiddleware,
 };
+use entity::sea_orm::Database;
+use entity::sea_orm::ConnectionTrait;
 use oauth2::{
     basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode, ClientId,
     ClientSecret, CsrfToken, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope,
     TokenResponse, TokenUrl,
 };
-use tracing::info;
+use tracing::{info, log::LevelFilter};
 
 use actix_files::Files;
 use actix_web::{
@@ -15,6 +19,8 @@ use actix_web::{
     web, App, HttpResponse, HttpServer, Responder,
 };
 use orca_config::Config;
+
+mod api;
 
 const DISCORD_API_BASE_URL: &'static str = "https://discord.com/api/v10";
 
@@ -125,8 +131,35 @@ async fn main() -> std::io::Result<()> {
     )
     .set_redirect_uri(RedirectUrl::new(cfg.webserver.oauth.redirect_url).unwrap());
 
+    let mut dbopts = entity::sea_orm::ConnectOptions::new(cfg.database.url.clone());
+
+    if let Some(log_queries) = &cfg.database.log_queries {
+        let loglevel = match log_queries {
+            0 => LevelFilter::Trace,
+            1 => LevelFilter::Debug,
+            2 => LevelFilter::Info,
+            3 => LevelFilter::Warn,
+            4.. => LevelFilter::Error,
+        };
+        dbopts.sqlx_logging(true).sqlx_logging_level(loglevel);
+    } else {
+        dbopts.sqlx_logging(false);
+    }
+
+    let db = Database::connect(dbopts)
+        .await
+        .expect("Failed to connect to database");
+
+    let db = web::Data::new(db);
+
+    info!(
+        r#type = ?db.get_database_backend(),
+        "Database connected & set up!",
+    );
+
     HttpServer::new(move || {
         App::new()
+            .app_data(db.clone())
             .wrap(
                 SessionMiddleware::builder(CookieSessionStore::default(), cookie_key.clone())
                     .cookie_content_security(CookieContentSecurity::Signed)
@@ -135,6 +168,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(login)
             .service(auth)
+            .configure(api::configure)
             .service(
                 Files::new(
                     "/",
