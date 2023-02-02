@@ -5,6 +5,7 @@
 use sea_orm::entity::prelude::*;
 use sea_orm::sea_query;
 use sea_orm::sea_query::{DynIden, SeaRc}; // this unbreaks the `sea_orm::Iden` derive. For some reason.
+use serde::de::Visitor;
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter)]
 pub enum AnarchyRank {
@@ -21,34 +22,30 @@ pub enum AnarchyRank {
     SPlus(u8),
 }
 
-#[derive(Debug, sea_orm::Iden)]
-pub struct AnarchyRankEnum;
+impl std::fmt::Display for AnarchyRank {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 
-impl ActiveEnum for AnarchyRank {
-    type Value = String;
-
-    fn name() -> DynIden {
-        SeaRc::new(AnarchyRankEnum)
-    }
-
-    fn to_value(&self) -> Self::Value {
         match self {
-            AnarchyRank::CMinus => "C-".into(),
-            AnarchyRank::C => "C".into(),
-            AnarchyRank::CPlus => "C+".into(),
-            AnarchyRank::BMinus => "B-".into(),
-            AnarchyRank::B => "B".into(),
-            AnarchyRank::BPlus => "B+".into(),
-            AnarchyRank::AMinus => "A-".into(),
-            AnarchyRank::A => "A".into(),
-            AnarchyRank::APlus => "A+".into(),
-            AnarchyRank::S => "S".into(),
-            AnarchyRank::SPlus(int) => format!("S+{}", int),
+            AnarchyRank::CMinus => write!(f, "C-"),
+            AnarchyRank::C => write!(f,"C"),
+            AnarchyRank::CPlus => write!(f,"C+"),
+            AnarchyRank::BMinus => write!(f,"B-"),
+            AnarchyRank::B => write!(f,"B"),
+            AnarchyRank::BPlus => write!(f,"B+"),
+            AnarchyRank::AMinus => write!(f,"A-"),
+            AnarchyRank::A => write!(f,"A"),
+            AnarchyRank::APlus => write!(f,"A+"),
+            AnarchyRank::S => write!(f,"S"),
+            AnarchyRank::SPlus(int) => write!(f, "S+{}", if *int > 50 { &50 } else { int }),
         }
     }
+}
 
-    fn try_from_value(v: &Self::Value) -> Result<Self, DbErr> {
-        let mut it = v.chars();
+impl std::str::FromStr for AnarchyRank {
+    type Err = DbErr;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut it = s.chars();
 
         match it.next().map(|x| x.to_ascii_uppercase()) {
             Some('C') => match it.next() {
@@ -84,6 +81,59 @@ impl ActiveEnum for AnarchyRank {
             },
             None | Some(_) => Err(DbErr::Type("Could not parse item into AnarchyRank".into())),
         }
+    }
+}
+
+#[derive(Debug, sea_orm::Iden)]
+pub struct AnarchyRankEnum;
+
+struct AnarchyRankVisitor;
+
+impl<'de> serde::Deserialize<'de> for AnarchyRank {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+        deserializer.deserialize_str(AnarchyRankVisitor)
+    }
+}
+
+impl<'v> Visitor<'v> for AnarchyRankVisitor {
+    type Value = AnarchyRank;
+
+    fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "A rank in valid format (/[CBA][-+]?|S(\\+\\d{{1,2}})?/)")
+    }
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error, {
+        v.parse().map_err(|e| E::custom(format!("{}", e)))
+    }
+
+}
+
+
+impl serde::Serialize for AnarchyRank {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl ActiveEnum for AnarchyRank {
+    type Value = String;
+
+    fn name() -> DynIden {
+        SeaRc::new(AnarchyRankEnum)
+    }
+
+    fn to_value(&self) -> Self::Value {
+        self.to_string()
+    }
+
+    fn try_from_value(v: &Self::Value) -> Result<Self, DbErr> {
+        v.parse()
     }
 
     fn db_type() -> sea_orm::ColumnDef {
@@ -143,7 +193,7 @@ impl sea_orm::sea_query::ValueType for AnarchyRank {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, serde::Serialize, serde::Deserialize)]
 #[sea_orm(table_name = "s3_profile")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]

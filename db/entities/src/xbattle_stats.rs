@@ -1,6 +1,16 @@
 use sea_orm::entity::prelude::*;
 
-#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, DeriveActiveEnum)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    DeriveActiveEnum,
+    serde::Deserialize,
+    serde::Serialize,
+)]
 #[sea_orm(rs_type = "u8", db_type = "TinyUnsigned")]
 /// A Citizen's X Division, if applicable.
 pub enum XBattleDivision {
@@ -14,7 +24,7 @@ pub enum XBattleDivision {
     Tentatek = 1,
 }
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, serde::Deserialize, serde::Serialize)]
 #[sea_orm(table_name = "xbattle_stats")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
