@@ -19,27 +19,46 @@
 CARGO ?= cargo
 
 # The path to this Makefile.
-MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/target
+MAKEFILE_PATH := $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 # Where to output build artifacts.
-TARGET_PATH ?= $(abspath $(MAKEFILE_PATH))
+TARGET_PATH ?= $(MAKEFILE_PATH)/target
 
 # Flags to pass to 'cargo build'.
 CARGO_BUILD_FLAGS ?=
+
+# Where should Vite place its output files?
+VITE_OUTPUT_PATH ?= $(TARGET_PATH)/frontend-dist
+export VITE_OUTPUT_PATH
 
 # Compile in release mode or not.
 RELEASE_BUILD ?=
 
 ifeq ($(RELEASE_BUILD),undefined)
-	ARTIFACT_PATH := $(realpath $(TARGET_PATH)/debug)
+	ARTIFACT_PATH := $(TARGET_PATH)/debug
 else
-	ARTIFACT_PATH := $(realpath $(TARGET_PATH)/release)
-	CARGO_BUILD_PATH += --release
+	ARTIFACT_PATH := $(TARGET_PATH)/release
+	CARGO_BUILD_FLAGS += --release
 endif
 
-###########################
-# ORCA Server Build Rules #
-###########################
+
+############################
+# Web Frontend Build Rules #
+############################
+
+$(TARGET_PATH)/frontend-dist/index.html:
+	@echo "]]] Writing frontend assets to'${VITE_OUTPUT_PATH}'... [[["
+	mkdir -p ${VITE_OUTPUT_PATH}
+	cd "${MAKEFILE_PATH}/webserver/frontend" && npx vite build
+
+frontend: $(TARGET_PATH)/frontend-dist/index.html
+
+clean-frontend:
+	rm -rf "${VITE_OUTPUT_PATH}"
+
+#######################
+#  Server Build Rules #
+#######################
 
 $(ARTIFACT_PATH)/orca-server:
 	@echo "]]] Building webserver binary in '${TARGET_PATH}'... [[["
@@ -47,15 +66,15 @@ $(ARTIFACT_PATH)/orca-server:
 
 server: $(ARTIFACT_PATH)/orca-server
 
-run-server: $(ARTIFACT_PATH)/orca-server
+run-server: server frontend orcaconf.toml
 	$(CARGO) run -p orca-server
 
 clean-server:
 	$(CARGO) clean -p orca-server
 
-################################
-# ORCA Discord Bot Build Rules #
-################################
+###########################
+# Discord Bot Build Rules #
+###########################
 
 $(ARTIFACT_PATH)/orca-bot:
 	@echo "]]] Building discord bot binary in '${TARGET_PATH}'... [[["
