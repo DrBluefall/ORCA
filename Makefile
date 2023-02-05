@@ -41,14 +41,19 @@ else
 	CARGO_BUILD_FLAGS += --release
 endif
 
-
 ############################
 # Web Frontend Build Rules #
 ############################
 
-$(TARGET_PATH)/frontend-dist/index.html:
+$(TARGET_PATH)/frontend-dist/index.html: ${shell find webserver/frontend     \
+												-not -path '*/node_modules/*'\
+												\( -type f -iname '*.ts'     \
+													-o -iname '*.js'         \
+													-o -iname '*.html'       \
+													-o -iname '*.json'       \)}
 	@echo "]]] Writing frontend assets to'${VITE_OUTPUT_PATH}'... [[["
 	mkdir -p ${VITE_OUTPUT_PATH}
+	cd "${MAKEFILE_PATH}/webserver/frontend" && npm install
 	cd "${MAKEFILE_PATH}/webserver/frontend" && npx vite build
 
 frontend: $(TARGET_PATH)/frontend-dist/index.html
@@ -60,9 +65,11 @@ clean-frontend:
 #  Server Build Rules #
 #######################
 
-$(ARTIFACT_PATH)/orca-server:
+$(ARTIFACT_PATH)/orca-server: ${shell find webserver -iname '*.rs' \
+										-o -iname '*.toml' -type f }
 	@echo "]]] Building webserver binary in '${TARGET_PATH}'... [[["
-	$(CARGO) build -p orca-server --target-dir '${TARGET_PATH}' $(CARGO_BUILD_FLAGS)
+	$(CARGO) build -p orca-server --target-dir '${TARGET_PATH}' \
+		$(CARGO_BUILD_FLAGS)
 
 server: $(ARTIFACT_PATH)/orca-server
 
@@ -76,13 +83,15 @@ clean-server:
 # Discord Bot Build Rules #
 ###########################
 
-$(ARTIFACT_PATH)/orca-bot:
+$(ARTIFACT_PATH)/orca-bot: ${shell find bot -iname '*.rs'      \
+									-o -iname '*.toml' -type f }
 	@echo "]]] Building discord bot binary in '${TARGET_PATH}'... [[["
-	$(CARGO) build -p orca-bot --target-dir '${TARGET_PATH}' $(CARGO_BUILD_FLAGS)
+	$(CARGO) build -p orca-bot --target-dir '${TARGET_PATH}' \
+		$(CARGO_BUILD_FLAGS)
 
 bot: $(ARTIFACT_PATH)/orca-bot
 
-run-bot: $(ARTIFACT_PATH)/orca-bot
+run-bot: bot orcaconf.toml
 	$(CARGO) run -p orca-bot
 
 clean-bot:
