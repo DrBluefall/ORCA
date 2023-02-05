@@ -1,8 +1,9 @@
+use std::{env::temp_dir, fs::read};
 use actix_session::{
     config::CookieContentSecurity, storage::CookieSessionStore, Session, SessionMiddleware,
 };
-use entity::sea_orm::Database;
 use entity::sea_orm::ConnectionTrait;
+use entity::sea_orm::Database;
 use oauth2::{
     basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode, ClientId,
     ClientSecret, CsrfToken, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope,
@@ -12,7 +13,7 @@ use tracing::{info, log::LevelFilter};
 
 use actix_files::Files;
 use actix_web::{
-    cookie::{Key, Cookie},
+    cookie::{Cookie, Key},
     http::header::LOCATION,
     web, App, HttpResponse, HttpServer, Responder,
 };
@@ -97,8 +98,25 @@ async fn auth(
 
     HttpResponse::Found()
         .append_header((LOCATION, "/"))
-        .cookie(Cookie::build("discord_user", &discord_user).secure(false).finish())
+        .cookie(
+            Cookie::build("discord_user", &discord_user)
+                .secure(false)
+                .finish(),
+        )
         .finish()
+}
+
+fn get_cookie() -> Key {
+    let mut tmp = temp_dir();
+    tmp.push("orca-server-cookie-key");
+
+    if tmp.exists() {
+        Key::from(&read(tmp).unwrap())
+    } else {
+        let key = Key::generate();
+        std::fs::write(tmp, key.master()).unwrap();
+        key
+    }
 }
 
 #[actix_web::main]
@@ -110,7 +128,7 @@ async fn main() -> std::io::Result<()> {
 
     let _log = orca_logging::init(&cfg);
 
-    let cookie_key = Key::generate();
+    let cookie_key = get_cookie();
 
     info!(
         version = env!("CARGO_PKG_VERSION"),
