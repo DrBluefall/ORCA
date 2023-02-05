@@ -10,11 +10,6 @@
     function on_logout() {
         removeCookie("discord_user");
         $current_user = null;
-        window.location.href = "/";
-    }
-
-    function on_login() {
-        window.location.href = "/login";
     }
 </script>
 
@@ -23,9 +18,9 @@
 <div id="login">
     {#if $current_user !== null}
         Hello, {$current_user.username}.
-        <button on:click={on_logout}>Logout</button>
+        <a href="/" on:click={on_logout}>Logout</a>
     {:else}
-        <button on:click={on_login}>Login</button>
+        <a href="/login">Login</a>
     {/if}
 </div>
 
