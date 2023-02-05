@@ -50,8 +50,9 @@ $(TARGET_PATH)/frontend-dist/index.html: ${shell find webserver/frontend     \
 												\( -type f -iname '*.ts'     \
 													-o -iname '*.js'         \
 													-o -iname '*.html'       \
-													-o -iname '*.json'       \)}
-	@echo "]]] Writing frontend assets to'${VITE_OUTPUT_PATH}'... [[["
+													-o -iname '*.json'       \
+													-o -iname '*.svelte'     \)}
+	@echo "]]] Writing frontend assets to '${VITE_OUTPUT_PATH}'... [[["
 	mkdir -p ${VITE_OUTPUT_PATH}
 	cd "${MAKEFILE_PATH}/webserver/frontend" && npm install
 	cd "${MAKEFILE_PATH}/webserver/frontend" && npx vite build
