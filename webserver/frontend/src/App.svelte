@@ -7,6 +7,7 @@
     <nav>
     <Login />
     </nav>
+    <br/>
     <p>
     <PlayerProfile />
     <p>
