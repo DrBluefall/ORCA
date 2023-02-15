@@ -31,8 +31,7 @@
     {:then player_data}
         {#if player_data !== null}
             <img
-                style="vertical-align: top;"
-                src="https://cdn.discordapp.com/avatars/{$current_user.id}/{$current_user.avatar}.png"
+                src="https://cdn.discordapp.com/avatars/{$current_user.id}/{$current_user.avatar}.png?size=128"
                 alt="Avatar of Citizen '{player_data.ign}#{player_data.discriminator}'"
                 id="user_picture"
             />
@@ -48,13 +47,12 @@
     {/await}
 </div>
 
-<style>
+<style text="text/scss">
+    #user_picture {
+        float: left;
+        margin: 2px;
+    }
     .user_info {
         font-family: "mononokiRegular", monospace;
-        line-height: 1em;
-    }
-
-    #player_profile {
-        display: inline-block;
     }
 </style>
