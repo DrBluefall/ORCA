@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with O.R.C.A. If not, see <https://www.gnu.org/licenses/>.
 use crate::{Context, Error};
-use entity::{prelude::*, s3_profile::AnarchyRank, xbattle_stats::XBattleDivision};
-use poise::serenity_prelude::{Color, User};
-use sea_orm::{ActiveEnum, EntityTrait, ModelTrait};
+use entity::{
+    prelude::*,
+    s3_profile::{ActiveModel as ProfileActiveModel, AnarchyRank},
+    xbattle_stats::XBattleDivision,
+};
+use poise::serenity_prelude as serenity;
+use sea_orm::{ActiveEnum, ActiveModelTrait, EntityTrait, ModelTrait};
+use tracing::{debug, info};
 
 #[poise::command(slash_command, subcommands("dossier_get"))]
-/// Commands intended to assist in the bot's administration.
+/// Commands for retrieving citizen information.
 pub async fn dossier(_: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
@@ -28,13 +33,14 @@ pub async fn dossier(_: Context<'_>) -> Result<(), Error> {
 #[poise::command(slash_command, rename = "get")]
 #[tracing::instrument(skip(ctx))]
 /// Fetch a Citizen's dossier.
-pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Error> {
+pub async fn dossier_get(ctx: Context<'_>, user: Option<serenity::User>) -> Result<(), Error> {
     ctx.defer().await?;
 
     let db = &ctx.data().db;
 
     let citizen = user.as_ref().unwrap_or_else(|| ctx.author());
 
+    debug!("Searching for user {}...", citizen.id.as_u64());
     if let Some(record) = S3Profile::find_by_id(*citizen.id.as_u64()).one(db).await? {
         let fcdashed = format!(
             "{}-{}-{}",
@@ -122,15 +128,81 @@ pub async fn dossier_get(ctx: Context<'_>, user: Option<User>) -> Result<(), Err
                         .avatar_url()
                         .unwrap_or_else(|| citizen.default_avatar_url()),
                 )
-                .color(Color::from_rgb(158, 253, 56))
+                .color(serenity::Color::from_rgb(158, 253, 56))
                 .fields(fields)
             })
         })
         .await?;
     } else {
-        if user.is_none() {
-            // TODO: Implement user registration on invocation.
-            ctx.say("I could not find you in my datastore.").await?;
+        if citizen == ctx.author() {
+            debug!("DNF! Asking to register...");
+
+            let uuid_yes = ctx.id();
+            let uuid_no = !ctx.id();
+
+            ctx.send(|m| {
+                m.content("I do not have you currently registered. Would you like to register?")
+                    .components(|c| {
+                        c.create_action_row(|ar| {
+                            ar.create_button(|b| {
+                                b.style(serenity::ButtonStyle::Success)
+                                    .label("Yes")
+                                    .custom_id(uuid_yes)
+                            })
+                            .create_button(|b| {
+                                b.style(serenity::ButtonStyle::Secondary)
+                                    .label("No")
+                                    .custom_id(uuid_no)
+                            })
+                        })
+                    })
+            })
+            .await?;
+
+            if let Some(mci) = serenity::CollectComponentInteraction::new(ctx)
+                .author_id(ctx.author().id)
+                .channel_id(ctx.channel_id())
+                .timeout(std::time::Duration::from_secs(60))
+                .filter(move |mci| {
+                    (mci.data.custom_id == uuid_yes.to_string())
+                        || (mci.data.custom_id == uuid_no.to_string())
+                })
+                .await
+            {
+                let mut msg = mci.message.clone();
+
+                if mci.data.custom_id == uuid_yes.to_string() {
+                    msg.edit(ctx, |m| m.content("Understood. Beginning registration..."))
+                        .await?;
+                    // Begin registration!
+
+                    let new_citizen = ProfileActiveModel {
+                        id: sea_orm::ActiveValue::Set(citizen.id.into()),
+                        ign: sea_orm::ActiveValue::Set("Unset!".into()),
+                        discriminator: sea_orm::ActiveValue::Set("0000".into()),
+                        level: sea_orm::ActiveValue::Set(1),
+                        turf_inked: sea_orm::ActiveValue::Set(0),
+                        total_wins: sea_orm::ActiveValue::Set(0),
+                        anarchy_rank_best: sea_orm::ActiveValue::Set(AnarchyRank::CMinus),
+                        anarchy_rank_current: sea_orm::ActiveValue::Set(AnarchyRank::CMinus),
+                        friend_code: sea_orm::ActiveValue::Set("000000000000".into()),
+                        fclink_token: sea_orm::ActiveValue::NotSet,
+                    };
+
+                    new_citizen.insert(db).await?;
+                    msg.edit(ctx, |m| {
+                        m.content("Registration complete!").components(|f| f)
+                    })
+                    .await?;
+                    mci.create_interaction_response(ctx, |ir| {
+                        ir.kind(serenity::InteractionResponseType::DeferredUpdateMessage)
+                    })
+                    .await?;
+                    ctx.rerun().await?;
+                } else {
+                    msg.delete(ctx).await?;
+                }
+            }
         } else {
             ctx.say("I could not find any citizen with the given ID.")
                 .await?;
