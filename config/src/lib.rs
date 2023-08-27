@@ -69,7 +69,7 @@ pub struct AssetConfig {
 
 #[derive(serde::Deserialize, Debug, Default)]
 pub struct WebserverAssetConfig {
-    pub static_files: Option<std::path::PathBuf>,
+    pub static_files: Option<String>,
 }
 
 #[derive(serde::Deserialize, Debug)]

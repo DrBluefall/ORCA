@@ -52,4 +52,4 @@ clam_blitz    = "<:xstat_icon_cb:1050270967819161670>"
 [assets.webserver]
 # Output of running `npm run build` in `webserver/frontend`
 # defaults to $PROJECT_ROOT/webserver/frontend/public
-# static_files = "webserver/frontend/public"
+static_files = "web/frontend/dist"

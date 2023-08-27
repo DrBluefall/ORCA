@@ -1,0 +1,40 @@
+[package]
+name = "orca-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.actix-web]
+version = "4.3"
+
+[dependencies.actix-files]
+version = "0.6"
+
+[dependencies.tracing]
+version = "0.1"
+
+[dependencies.sea-orm]
+version = "0.10"
+features = [ "sqlx-mysql", "runtime-tokio-rustls" ]
+
+[dependencies.sea-orm-migration]
+version = "0.10"
+features = [ "sqlx-mysql", "runtime-tokio-rustls" ]
+
+[dependencies.tokio]
+version = "1.22"
+features = [ "rt-multi-thread", "macros" ]
+
+[dependencies.orca_config]
+path = "../../config"
+
+[dependencies.orca_logging]
+path  = "../../logging"
+features = [ "server" ]
+
+[dependencies.entity]
+path = "../../db/entities"
+
+[dependencies.migration]
+path = "../../db/migrations"
