@@ -38,11 +38,12 @@ Now with 100% more oxidation!
 
 ## License
 
-All content within this repository, unless stated otherwise, is licensed under
-the GNU Affero General Public License. See below for the AGPL license notice,
-and [here](COPYING.md) for the license file itself.
+All content within this repository, unless stated otherwise, or owned by another
+person/entity, is licensed under the GNU Affero General Public License. See
+below for the AGPL license notice, and [here](COPYING.md) for the license file
+itself.
 
-> Copyright 2022 Alexander Bisono.
+> Copyright 2022,2023 Alexander Bisono.
 >
 > O.R.C.A is free software: you can redistribute it and/or modify it under the
 > terms of the GNU Affero General Public License as published by the Free
