@@ -8,6 +8,8 @@ use tracing::{info, log::LevelFilter};
 
 use orca_config::Config;
 
+mod routes;
+
 #[get("/checkhealth")]
 async fn checkhealth() -> impl Responder {
     HttpResponse::Ok().body("All is well!")
@@ -57,16 +59,22 @@ async fn main() -> std::io::Result<()> {
     );
 
     HttpServer::new(move || {
-        App::new().service(checkhealth).service(Files::new(
-            "/",
-            config
-                .assets
-                .webserver
-                .static_files
-                .as_ref()
-                .map(|x| x.as_str())
-                .unwrap_or_else(|| "web/frontend/dist"),
-        ).index_file("index.html"))
+        App::new()
+            .service(checkhealth)
+            .configure(routes::configure)
+            .service(
+                Files::new(
+                    "/",
+                    config
+                        .assets
+                        .webserver
+                        .static_files
+                        .as_ref()
+                        .map(|x| x.as_str())
+                        .unwrap_or_else(|| "web/frontend/dist"),
+                )
+                .index_file("index.html"),
+            )
     })
     .bind(("127.0.0.1", 8080))?
     .run()

@@ -1,20 +1,12 @@
 <script lang="ts">
     import PrismarineCoLogo from "./assets/pc_gear_v3.svg";
+    import Login from "./components/Login.svelte";
+    import Router from "svelte-spa-router";
 
-    let innerWidth = 0;
-    let innerHeight = 0;
+    const routes = {
+        "/signin": Login,
+    };
 </script>
-
-<svelte:head>
-    <link
-        rel="stylesheet"
-        media="screen"
-        href="https://fontlibrary.org//face/mononoki"
-        type="text/css"
-    />
-</svelte:head>
-
-<svelte:window bind:innerWidth bind:innerHeight />
 
 <main>
     <nav>
@@ -27,9 +19,14 @@
 
             <span id="header-company-name">PrismarineCo.</span>
             <span id="header-company-name-long">The Prismarine Company</span>
+            |
+            <a href="/#/signin">Sign In</a>
         </p>
     </nav>
     <hr />
+    <div>
+        <Router {routes} />
+    </div>
 </main>
 
 <style>
@@ -38,8 +35,8 @@
         vertical-align: middle;
         transform: translateY(-5%);
     }
+
     #header-company {
-        font-family: "Mononoki", sans-serif;
         font-size: 30px;
     }
 
