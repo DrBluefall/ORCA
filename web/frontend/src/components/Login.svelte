@@ -3,10 +3,12 @@
     let password = "";
 
     async function signin(_e: SubmitEvent) {
+        console.log(JSON.stringify({ email, password }));
         let response = await fetch("/api/signin", {
             method: "POST",
             mode: "same-origin",
             body: JSON.stringify({ email, password }),
+            headers: { "Content-Type" : "application/json" },
         });
 
         if (response.status != 200) {

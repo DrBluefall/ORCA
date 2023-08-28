@@ -1,7 +1,17 @@
-use actix_web::{Responder, HttpResponse};
+use actix_web::{Responder, HttpResponse, web};
+use serde::Deserialize;
+use tracing::debug;
+
+#[derive(Debug, Deserialize)]
+pub struct SignInDetails {
+    email: String,
+    password: String,
+}
 
 #[actix_web::post("/signin")]
-pub async fn signin() -> impl Responder {
+#[tracing::instrument]
+pub async fn signin(details: web::Json<SignInDetails>) -> impl Responder {
+    debug!("{:?}", details);
     HttpResponse::NotImplemented().finish()
 }
 
