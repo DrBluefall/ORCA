@@ -1,10 +1,12 @@
 <script lang="ts">
     import PrismarineCoLogo from "./assets/pc_gear_v3.svg";
     import Login from "./components/Login.svelte";
+    import Signup from "./components/Signup.svelte";
     import Router from "svelte-spa-router";
 
     const routes = {
         "/signin": Login,
+        "/signup": Signup,
     };
 </script>
 

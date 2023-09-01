@@ -4,8 +4,10 @@ mod auth;
 
 pub fn configure(conf: &mut ServiceConfig) {
     conf.service(
-        web::scope("/api")
-            .service(auth::signin)
-            .service(auth::signup),
+        web::scope("/api").service(
+            web::scope("/site")
+                .service(auth::signin)
+                .service(auth::signup),
+        ),
     );
 }

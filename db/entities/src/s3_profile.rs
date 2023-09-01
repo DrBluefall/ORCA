@@ -198,7 +198,7 @@ impl sea_orm::sea_query::ValueType for AnarchyRank {
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     #[serde(skip)]
-    pub id: u64,
+    pub id: Uuid,
     pub ign: String,
     pub discriminator: String,
     pub level: u16,
@@ -212,6 +212,13 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "crate::orcasite_account::Entity",
+        from = "Column::Id",
+        to = "crate::orcasite_account::Column::Id",
+        on_delete = "Cascade",
+    )]
+    OrcasiteAccount,
     #[sea_orm(has_one = "super::xbattle_stats::Entity")]
     XBattleStats,
 }
@@ -219,6 +226,12 @@ pub enum Relation {
 impl Related<super::xbattle_stats::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::XBattleStats.def()
+    }
+}
+
+impl Related<crate::orcasite_account::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::OrcasiteAccount.def()
     }
 }
 

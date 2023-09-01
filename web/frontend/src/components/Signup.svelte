@@ -1,12 +1,13 @@
 <script lang="ts">
     let email = "";
     let password = "";
+    let username = "";
 
     async function auth() {
-        let response = await fetch("/api/site/signin", {
+        let response = await fetch("/api/site/signup", {
             method: "POST",
             mode: "same-origin",
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, username }),
             headers: { "Content-Type": "application/json" },
         });
 
@@ -20,7 +21,18 @@
 </script>
 
 <div class="form">
+    <h1>Let's get you in!</h1>
     <form>
+        <label for="username">Username</label>
+        <input
+            id="username"
+            class="input-field"
+            type="text"
+            required
+            name="username"
+            bind:value={username}
+            placeholder="Squidbeak"
+        />
         <label for="email">Email</label>
         <input
             id="email"
@@ -28,7 +40,6 @@
             type="email"
             required
             name="email"
-            autocomplete="username"
             bind:value={email}
             placeholder="user@example.com"
         /><br />
@@ -42,11 +53,11 @@
         /><br />
         <div id="signin_button">
             <button on:click|preventDefault={async () => await auth()}
-                >Sign In</button
+                >Sign Up</button
             >
             <br />
         </div>
-        <a href="/#/signup">Don't have an account?</a>
+        <a href="/#/signin">Already have an account?</a>
     </form>
 </div>
 

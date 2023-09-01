@@ -7,9 +7,26 @@ edition = "2021"
 
 [dependencies.actix-web]
 version = "4.3"
+features = [ "cookies" ]
+
+[dependencies.cookie]
+version = "0.16"
+features = [ "secure", "percent-encode" ]
+
+[dependencies.uuid]
+version = "1.4"
+features = [ "v7", "fast-rng" ]
 
 [dependencies.actix-files]
 version = "0.6"
+
+[dependencies.argon2]
+version = "0.5"
+features = [ "password-hash" ]
+
+[dependencies.actix-session]
+version = "0.7"
+features = [ "redis-actor-session" ]
 
 [dependencies.serde]
 version = "1.0"

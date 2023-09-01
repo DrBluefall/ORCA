@@ -1,8 +1,11 @@
 use actix_files::Files;
+use actix_session::storage::RedisActorSessionStore;
+use actix_session::SessionMiddleware;
 use actix_web::get;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use cookie::Key;
 use migration::Migrator;
-use sea_orm::{ConnectOptions, ConnectionTrait, Database, DatabaseConnection};
+use sea_orm::{ConnectOptions, ConnectionTrait, Database};
 use sea_orm_migration::MigratorTrait;
 use tracing::{info, log::LevelFilter};
 
@@ -58,8 +61,28 @@ async fn main() -> std::io::Result<()> {
         "Database connected & set up!",
     );
 
+    let db_dat = web::Data::new(db);
+
+    let secret_key_path = std::path::Path::new(&config.webserver.secret_key_path);
+
+    let secret_key: Key;
+
+    if secret_key_path.exists() {
+        // Read a key we already have saved...
+        secret_key = Key::from(&std::fs::read(secret_key_path).unwrap());
+    } else {
+        // ...or generate a new secret key and save it to the configured path
+        secret_key = Key::generate();
+        std::fs::write(secret_key_path, secret_key.master()).unwrap();
+    }
+
     HttpServer::new(move || {
         App::new()
+            .wrap(SessionMiddleware::new(
+                RedisActorSessionStore::new(&config.webserver.redis_url),
+                secret_key.clone(),
+            ))
+            .app_data(db_dat.clone())
             .service(checkhealth)
             .configure(routes::configure)
             .service(

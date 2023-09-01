@@ -28,7 +28,8 @@ pub struct Config {
 
 #[derive(serde::Deserialize, Debug)]
 pub struct WebserverConfig {
-    pub oauth: DiscordOauthConfig,
+    pub secret_key_path: String,
+    pub redis_url: String,
 }
 
 #[derive(serde::Deserialize, Debug)]

@@ -29,7 +29,7 @@ pub enum XBattleDivision {
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     #[serde(skip)]
-    pub id: u64,
+    pub id: Uuid,
     pub division: XBattleDivision,
     pub splat_zones: u16,
     pub tower_control: u16,
