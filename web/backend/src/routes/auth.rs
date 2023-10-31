@@ -9,13 +9,14 @@ use migration::tests_cfg::json;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
 };
+use secrecy::ExposeSecret;
 use serde::Deserialize;
 use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
 pub struct AuthInfo {
     email: String,
-    password: String,
+    password: secrecy::SecretString,
 }
 
 #[actix_web::post("/signin")]
@@ -36,7 +37,7 @@ pub async fn signin(
 
         let pw_hash = PasswordHash::new(&potential_match.passhash_str).unwrap();
 
-        match ag2.verify_password(details.password.as_bytes(), &pw_hash) {
+        match ag2.verify_password(details.password.expose_secret().as_bytes(), &pw_hash) {
             Ok(()) => {
                 // Password verified! Let's get them in.
                 session.renew();
@@ -64,7 +65,7 @@ pub async fn signin(
 pub struct NewSignUp {
     email: String,
     username: String,
-    password: String,
+    password: secrecy::SecretString,
 }
 
 #[actix_web::post("/signup")]
@@ -97,7 +98,7 @@ pub async fn signup(
     }
 
     match Argon2::default().hash_password(
-        signup_info.password.as_bytes(),
+        signup_info.password.expose_secret().as_bytes(),
         &SaltString::generate(&mut OsRng),
     ) {
         Ok(pw_hash) => {
