@@ -1,10 +1,11 @@
 <script lang="ts">
+    import SwapTextButton from "../util/SwapTextButton.svelte";
+    import SwapTextLink from "../util/SwapTextLink.svelte";
+
     let email = "";
     let password = "";
     let username = "";
     let errors: string[] = [];
-    let login_redirect: string = "Already have an account?";
-    let signup_text: string = "Sign Up";
 
     async function auth() {
         errors = [];
@@ -73,34 +74,21 @@
             type="password"
             placeholder="doNotUseThisPassword"
         /><br />
-        <button
-            class="button"
-            on:click|preventDefault={async () => await auth()}
-            on:mouseenter={() => {
-                signup_text = "You're in for something special.";
-            }}
-            on:mouseleave={() => {
-                signup_text = "Sign Up";
-            }}>{signup_text}</button
-        >
+        <SwapTextButton
+            initial_text="Sign Up"
+            swap_text="You're in for something special."
+            callback={async () => await auth()}
+        />
         <br />
-        <a
-            href="/#/signin"
-            class="button"
-            on:mouseenter={() => {
-                login_redirect = "Let's get you to the right place.";
-            }}
-            on:mouseleave={() => {
-                login_redirect = "Already have an account?";
-            }}>{login_redirect}</a
-        >
+        <SwapTextLink
+            dest="/#/signin"
+            swap_text="Let's get you to the right place."
+            initial_text="Already have an account?"
+        />
     </form>
 </div>
 
 <style lang="scss">
-    $backgroundColor: #000000;
-    $color: #ffffff;
-
     * {
         box-sizing: border-box;
     }
@@ -119,62 +107,6 @@
         display: flex;
         align-items: center;
         flex-direction: column;
-    }
-
-    a,
-    button {
-        font-size: 1.15rem;
-    }
-
-    a.button {
-        text-decoration: none;
-    }
-
-    button.button {
-        border: none;
-        background-color: transparent;
-        font-family: inherit;
-        padding: 0;
-        cursor: pointer;
-
-        @media screen and (-ms-high-contrast: active) {
-            border: 2px solid currentcolor;
-        }
-    }
-
-    a.button,
-    button.button {
-        // Display
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        // Visual
-        background-color: $backgroundColor;
-        color: $color;
-        border-radius: 8px;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
-
-        // Size
-        padding: 0.25em 0.75em;
-        min-width: 10ch;
-        min-height: 44px;
-
-        // Text
-        text-align: center;
-        line-height: 1.1;
-
-        // Spacing
-        margin-top: 5px;
-        margin-bottom: 5px;
-
-        transition: 220ms all ease-in-out;
-
-        &:hover,
-        &:active {
-            background-color: $color;
-            color: $backgroundColor;
-        }
     }
 
     #errors {
