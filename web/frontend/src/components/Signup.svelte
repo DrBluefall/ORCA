@@ -23,9 +23,11 @@
             }
 
             if (json.already_exists === "uname") {
-                errors = [...errors, "That username is already registered. Maybe try a different one?"];
+                errors = [
+                    ...errors,
+                    "That username is already registered. Maybe try a different one?",
+                ];
             }
-
         } else {
             // log in on successful auth
             window.location.replace("/");
@@ -39,7 +41,7 @@
         {#if errors.length != 0}
             <ul id="errors">
                 {#each errors as error}
-	                <li>{error}</li>
+                    <li>{error}</li>
                 {/each}
             </ul>
         {/if}
@@ -75,26 +77,29 @@
             class="button"
             on:click|preventDefault={async () => await auth()}
             on:mouseenter={() => {
-                            signup_text = "You're in for something special.";
-                          }}
+                signup_text = "You're in for something special.";
+            }}
             on:mouseleave={() => {
-                            signup_text = "Sign Up";
-                         }}>{signup_text}</button>
+                signup_text = "Sign Up";
+            }}>{signup_text}</button
+        >
         <br />
-        <a href="/#/signin"
-           class="button"
-           on:mouseenter={() => {
-                            login_redirect = "Let's get you to the right place.";
-                         }}
-           on:mouseleave={() => {
-                            login_redirect = "Already have an account?";
-                         }}>{login_redirect}</a>
+        <a
+            href="/#/signin"
+            class="button"
+            on:mouseenter={() => {
+                login_redirect = "Let's get you to the right place.";
+            }}
+            on:mouseleave={() => {
+                login_redirect = "Already have an account?";
+            }}>{login_redirect}</a
+        >
     </form>
 </div>
 
 <style lang="scss">
     $backgroundColor: #000000;
-    $color: #FFFFFF;
+    $color: #ffffff;
 
     * {
         box-sizing: border-box;
@@ -116,7 +121,8 @@
         flex-direction: column;
     }
 
-    a, button {
+    a,
+    button {
         font-size: 1.15rem;
     }
 
@@ -172,10 +178,9 @@
     }
 
     #errors {
-        border: 1px solid #DD0000;
+        border: 1px solid #dd0000;
         border-radius: 7px;
         padding: 7px;
         list-style-type: none;
     }
-
 </style>
