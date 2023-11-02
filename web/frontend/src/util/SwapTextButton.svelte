@@ -13,8 +13,7 @@
         current = initial_text;
     }}
     on:click|preventDefault={callback}
-    {...$$restProps}
->
+    {...$$restProps}>
     {current}
 </button>
 

@@ -54,8 +54,7 @@
             required
             name="username"
             bind:value={username}
-            placeholder="Squidbeak"
-        />
+            placeholder="Squidbeak" />
         <label for="email">Email</label>
         <input
             id="email"
@@ -64,27 +63,23 @@
             required
             name="email"
             bind:value={email}
-            placeholder="user@example.com"
-        /><br />
+            placeholder="user@example.com" /><br />
         <label for="password">Password</label>
         <input
             id="password"
             class="input-field"
             bind:value={password}
             type="password"
-            placeholder="doNotUseThisPassword"
-        /><br />
+            placeholder="doNotUseThisPassword" /><br />
         <SwapTextButton
             initial_text="Sign Up"
             swap_text="You're in for something special."
-            callback={async () => await auth()}
-        />
+            callback={async () => await auth()} />
         <br />
         <SwapTextLink
             dest="/#/signin"
             swap_text="Let's get you to the right place."
-            initial_text="Already have an account?"
-        />
+            initial_text="Already have an account?" />
     </form>
 </div>
 

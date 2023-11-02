@@ -13,8 +13,7 @@
         current = initial_text;
     }}
     href={dest}
-    {...$$restProps}
->
+    {...$$restProps}>
     {current}
 </a>
 

@@ -16,8 +16,7 @@
             <img
                 id="header-logo"
                 src={PrismarineCoLogo}
-                alt="The PrismarineCo logo: a hexagon surrounding a gear"
-            />
+                alt="The PrismarineCo logo: a hexagon surrounding a gear" />
 
             <span id="header-company-name">PrismarineCo.</span>
             <span id="header-company-name-long">The Prismarine Company</span>
