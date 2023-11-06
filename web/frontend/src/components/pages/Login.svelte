@@ -1,6 +1,8 @@
 <script lang="ts">
+    import OrcaUser from "../../cls/user";
     import SwapTextButton from "../../util/SwapTextButton.svelte";
     import SwapTextLink from "../../util/SwapTextLink.svelte";
+    import { current_user } from "../../util/store/current_user";
     let email = "";
     let password = "";
     let errors: string[] = [];
@@ -22,7 +24,28 @@
             }
         } else {
             // log in on successful auth
-            window.location.replace("/");
+
+            let usr_response = await fetch("/api/site/current_user", {
+                mode: "same-origin",
+                credentials: "include",
+            });
+
+            if (!usr_response.ok) {
+                errors = [
+                    ...errors,
+                    `Failed to acquire account info... (status: ${usr_response.status})`,
+                ];
+            } else {
+                let usr_info = await usr_response.json();
+                current_user.set(
+                    new OrcaUser(
+                        usr_info.id,
+                        usr_info.username,
+                        usr_info.email,
+                    ),
+                );
+                window.location.replace("/#");
+            }
         }
     }
 </script>

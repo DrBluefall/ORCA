@@ -6,6 +6,7 @@
     import Router from "svelte-spa-router";
     import { link } from "svelte-spa-router";
     import { slide } from "svelte/transition";
+    import { current_user } from "./util/store/current_user";
 
     let sidebar_open: boolean = false;
     const toggle_sidebar = () => {
@@ -35,7 +36,11 @@
             <p id="header-company">
                 <span id="header-company-name">PrismarineCo.</span>
                 <span id="header-company-name-long"
-                    >The Prismarine Company</span>
+                    >{#if $current_user !== null}
+                        Welcome, {$current_user.username}
+                    {:else}
+                        The Prismarine Company
+                    {/if}</span>
             </p>
         </a>
         <button on:click|preventDefault={toggle_sidebar}>

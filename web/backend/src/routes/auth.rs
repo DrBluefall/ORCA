@@ -1,5 +1,5 @@
 use actix_session::Session;
-use actix_web::{http::header::SET_COOKIE, web, HttpResponse, Responder};
+use actix_web::{web, HttpResponse, Responder};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
@@ -124,5 +124,19 @@ pub async fn signup(
                 HttpResponse::InternalServerError().finish()
             }
         }
+    }
+}
+
+#[actix_web::get("/current_user")]
+#[tracing::instrument(skip(session))]
+pub async fn current_user(session: Session, db: web::Data<DatabaseConnection>) -> impl Responder {
+    if let Some(usr_id) = session.get::<Uuid>("orca_user_id").unwrap() {
+        if let Some(usr) = OrcaAccount::find_by_id(usr_id).one(&**db).await.unwrap() {
+            HttpResponse::Ok().json(usr)
+        } else {
+            HttpResponse::NotFound().finish()
+        }
+    } else {
+        HttpResponse::NotFound().finish()
     }
 }
