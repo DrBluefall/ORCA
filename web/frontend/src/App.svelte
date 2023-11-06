@@ -1,18 +1,19 @@
 <script lang="ts">
     import PrismarineCoLogo from "./assets/pc_gear_v3.svg";
-    import Login from "./components/Login.svelte";
-    import Signup from "./components/Signup.svelte";
+    import Login from "./components/pages/Login.svelte";
+    import Signup from "./components/pages/Signup.svelte";
+    import Index from "./components/pages/Index.svelte";
     import Router from "svelte-spa-router";
     import { link } from "svelte-spa-router";
     import { slide } from "svelte/transition";
 
-    let sidebar = document.getElementById("sidebar")!;
     let sidebar_open: boolean = false;
     const toggle_sidebar = () => {
         sidebar_open = !sidebar_open;
     };
 
     const routes = {
+        "/": Index,
         "/signin": Login,
         "/signup": Signup,
     };

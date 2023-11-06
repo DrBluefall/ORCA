@@ -1,6 +1,6 @@
 <script lang="ts">
-    import SwapTextButton from "../util/SwapTextButton.svelte";
-    import SwapTextLink from "../util/SwapTextLink.svelte";
+    import SwapTextButton from "../../util/SwapTextButton.svelte";
+    import SwapTextLink from "../../util/SwapTextLink.svelte";
 
     let email = "";
     let password = "";
