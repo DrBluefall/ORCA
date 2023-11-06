@@ -12,6 +12,10 @@
         sidebar_open = !sidebar_open;
     };
 
+    const on_route_load = (_: Object) => {
+        sidebar_open = false;
+    };
+
     const routes = {
         "/": Index,
         "/signin": Login,
@@ -54,7 +58,7 @@
             </nav>
         {/if}
         <main>
-            <Router {routes} />
+            <Router on:routeLoading={on_route_load} {routes} />
         </main>
     </div>
 </div>
