@@ -37,7 +37,6 @@
 </script>
 
 <div class="form">
-    <h1>Let's get you in!</h1>
     <form>
         {#if errors.length != 0}
             <ul id="errors">
