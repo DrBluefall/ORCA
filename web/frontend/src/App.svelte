@@ -3,6 +3,7 @@
     import Login from "./components/Login.svelte";
     import Signup from "./components/Signup.svelte";
     import Router from "svelte-spa-router";
+    import { link } from "svelte-spa-router";
     import { slide } from "svelte/transition";
 
     let sidebar = document.getElementById("sidebar")!;
@@ -18,15 +19,20 @@
 </script>
 
 <div id="toplevel">
-    <nav>
-        <img
-            id="header-logo"
-            src={PrismarineCoLogo}
-            alt="The PrismarineCo logo: a hexagon surrounding a gear" />
-        <p id="header-company">
-            <span id="header-company-name">PrismarineCo.</span>
-            <span id="header-company-name-long">The Prismarine Company</span>
-        </p>
+    <div id="site-header">
+        <a href="/" use:link>
+            <img
+                id="header-logo"
+                src={PrismarineCoLogo}
+                alt="The PrismarineCo logo: a hexagon surrounding a gear" />
+        </a>
+        <a href="/" use:link id="root-link">
+            <p id="header-company">
+                <span id="header-company-name">PrismarineCo.</span>
+                <span id="header-company-name-long"
+                    >The Prismarine Company</span>
+            </p>
+        </a>
         <button on:click|preventDefault={toggle_sidebar}>
             <svg id="navclick-svg" viewBox="0 0 100 80" width="40" height="40">
                 <rect y="5" width="100" height="10"></rect>
@@ -34,31 +40,25 @@
                 <rect y="65" width="100" height="10"></rect>
             </svg>
         </button>
-    </nav>
-    {#if sidebar_open}
-        <aside id="sidebar" transition:slide>
-            <ul>
-                <li>item 1</li>
-                <li>item 2</li>
-            </ul>
-        </aside>
-    {/if}
-    <main>
-        <div class="noshow">
+    </div>
+    <div id="site-body">
+        {#if sidebar_open}
+            <nav
+                id="sidebar"
+                class="is-visible"
+                transition:slide={{ axis: "x" }}>
+                <ul id="navlinks">
+                    <li><a href="/signin" use:link>Sign In</a></li>
+                </ul>
+            </nav>
+        {/if}
+        <main>
             <Router {routes} />
-        </div>
-    </main>
+        </main>
+    </div>
 </div>
 
 <style>
-    .noshow {
-        visible: false;
-    }
-    #toplevel {
-        display: grid;
-        grid-template-columns: 4fr 1fr;
-    }
-
     button {
         border: none;
         background-color: transparent;
@@ -70,15 +70,19 @@
             border: 2px solid currentcolor;
         }
     }
+    #root-link {
+        text-decoration: none;
+        background-color: inherit;
+        color: inherit;
+    }
 
     main,
-    nav {
+    #site-header {
         transition: margin-right 0.5;
     }
 
-    nav {
-        grid-area: nav;
-        grid-row: 1 / 2;
+    #site-header {
+        width: 100%;
         display: flex;
         justify-content: space-between;
         border-bottom: 1px solid #ffffff;
@@ -88,18 +92,31 @@
         fill: white;
     }
 
+    #site-body {
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row-reverse;
+    }
+
+    main {
+        padding: 0.5rem 0.5rem;
+        flex: 1 0 100%;
+    }
+
     #sidebar {
-        grid-column: 2;
-        grid-row-start: 2;
+        height: 100%;
+        flex: 0 0 auto;
         border-left: 1px solid #fff;
         background-color: #0f0f0f;
         overflow-x: hidden;
         transition: 0.5;
     }
+    #sidebar.is-visible ~ main {
+        flex-basis: 0;
+    }
 
-    main {
-        grid-row: 2/3;
-        grid-column: 1/2;
+    #navlinks {
+        padding: 1rem;
     }
 
     #header-logo {
